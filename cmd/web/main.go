@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/wiscaksono/lapormas-go/internal/config"
 )
 
 func main() {
 	viperConfig := config.NewViper()
-	app := config.NewChi(viperConfig)
+	app := config.NewFiber(viperConfig)
 	log := config.NewLogger(viperConfig)
 	db := config.NewDatabase(viperConfig, log)
 	validator := config.NewValidator(viperConfig)
@@ -23,8 +22,8 @@ func main() {
 	})
 
 	webPort := viperConfig.GetInt("web.port")
-	addr := fmt.Sprintf(":%d", webPort)
-
-	fmt.Printf("Starting server on %s\n", addr)
-	http.ListenAndServe(addr, app)
+	err := app.Listen(fmt.Sprintf(":%d", webPort))
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
