@@ -27,6 +27,6 @@ func (c *RoleController) List(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(model.WebResponse[*model.RoleResponse]{
-		Success: true, Data: response, Message: "Success get role",
+		Success: true, Data: response, Message: "Success get roles",
 	})
 }
