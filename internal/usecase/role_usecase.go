@@ -33,7 +33,7 @@ func (c *RoleUseCase) List(ctx context.Context) (*model.RoleResponse, error) {
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
-	role := new(entity.Role)
+	role := new([]entity.Role)
 
 	if err := c.RoleRepository.List(tx, role); err != nil {
 		c.Log.Warnf("Failed to list role : %+v", err)

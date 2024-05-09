@@ -17,6 +17,6 @@ func NewRoleRepository(log *logrus.Logger) *RoleRepository {
 	}
 }
 
-func (r *RoleRepository) List(db *gorm.DB, role *entity.Role) error {
+func (r *RoleRepository) List(db *gorm.DB, role *[]entity.Role) error {
 	return db.Find(role).Error
 }

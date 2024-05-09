@@ -6,7 +6,11 @@ import (
 )
 
 type RoleResponse struct {
+	List []RoleIDName `json:"list,omitempty"`
+}
+
+type RoleIDName struct {
 	ID uuid.UUID `json:"id,omitempty"`
 
-	Name entity.RoleCode `json:"role,omitempty"`
+	Name entity.RoleCode `json:"name,omitempty"`
 }
