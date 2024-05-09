@@ -52,5 +52,39 @@ func (c *UserController) Current(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(model.WebResponse[*model.UserResponse]{Data: response})
+	return ctx.JSON(model.WebResponse[*model.UserResponse]{Success: true, Data: response, Message: "User has been retrieved"})
+}
+
+func (c *UserController) Login(ctx *fiber.Ctx) error {
+	request := new(model.LoginUserRequest)
+
+	err := ctx.BodyParser(request)
+	if err != nil {
+		c.Log.Warnf("Failed to parse request body : %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	response, err := c.UseCase.Login(ctx.UserContext(), request)
+	if err != nil {
+		c.Log.Warnf("Failed to login user : %+v", err)
+		return err
+	}
+
+	return ctx.JSON(model.WebResponse[*model.UserResponse]{Success: true, Data: response, Message: "User has been logged in"})
+}
+
+func (c *UserController) Logout(ctx *fiber.Ctx) error {
+	auth := middleware.GetUser(ctx)
+
+	request := &model.LogoutUserRequest{
+		ID: auth.ID,
+	}
+
+	_, err := c.UseCase.Logout(ctx.UserContext(), request)
+	if err != nil {
+		c.Log.WithError(err).Warnf("Failed to logout user")
+		return err
+	}
+
+	return ctx.JSON(model.WebResponse[any]{Success: true, Message: "User has been logged out"})
 }
