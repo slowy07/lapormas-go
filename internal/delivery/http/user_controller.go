@@ -3,7 +3,6 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
-	"github.com/wiscaksono/lapormas-go/internal/delivery/http/middleware"
 	"github.com/wiscaksono/lapormas-go/internal/model"
 	"github.com/wiscaksono/lapormas-go/internal/usecase"
 )
@@ -40,10 +39,8 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) Current(ctx *fiber.Ctx) error {
-	auth := middleware.GetUser(ctx)
-
 	request := &model.GetUserRequest{
-		ID: auth.ID,
+		Token: ctx.Get("Authorization"),
 	}
 
 	response, err := c.UseCase.Current(ctx.UserContext(), request)
@@ -74,10 +71,8 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) Logout(ctx *fiber.Ctx) error {
-	auth := middleware.GetUser(ctx)
-
 	request := &model.LogoutUserRequest{
-		ID: auth.ID,
+		Token: ctx.Get("Authorization"),
 	}
 
 	_, err := c.UseCase.Logout(ctx.UserContext(), request)

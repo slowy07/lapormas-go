@@ -41,14 +41,9 @@ func (c *UserUseCase) Create(ctx context.Context, request *model.RegisterUserReq
 		return nil, fiber.ErrBadRequest
 	}
 
-	total, err := c.UserRepository.CountByID(tx, request.ID)
-	if err != nil {
-		c.Log.Warnf("Failed count user from database : %+v", err)
-		return nil, fiber.ErrInternalServerError
-	}
-
-	if total > 0 {
-		c.Log.Warnf("User already exists : %+v", err)
+	exist := new(entity.User)
+	if check := c.UserRepository.FindByUsername(tx, exist, request.Username); check == nil {
+		c.Log.Warnf("Username already exist : %+v", request.Username)
 		return nil, fiber.ErrConflict
 	}
 
@@ -59,7 +54,7 @@ func (c *UserUseCase) Create(ctx context.Context, request *model.RegisterUserReq
 	}
 
 	user := &entity.User{
-		ID:       request.ID,
+		Username: request.Username,
 		Password: string(password),
 		Name:     request.Name,
 	}
@@ -98,7 +93,7 @@ func (c *UserUseCase) Verify(ctx context.Context, request *model.VerifyUserReque
 		return nil, fiber.ErrInternalServerError
 	}
 
-	return &model.Auth{ID: user.ID}, nil
+	return &model.Auth{Token: user.Token}, nil
 }
 
 func (c *UserUseCase) Current(ctx context.Context, request *model.GetUserRequest) (*model.UserResponse, error) {
@@ -111,7 +106,7 @@ func (c *UserUseCase) Current(ctx context.Context, request *model.GetUserRequest
 	}
 
 	user := new(entity.User)
-	if err := c.UserRepository.FindByID(tx, user, request.ID); err != nil {
+	if err := c.UserRepository.FindByToken(tx, user, request.Token); err != nil {
 		c.Log.Warnf("Failed find user by id : %+v", err)
 		return nil, fiber.ErrNotFound
 	}
@@ -134,7 +129,7 @@ func (c *UserUseCase) Login(ctx context.Context, request *model.LoginUserRequest
 	}
 
 	user := new(entity.User)
-	if err := c.UserRepository.FindByID(tx, user, request.ID); err != nil {
+	if err := c.UserRepository.FindByUsername(tx, user, request.Username); err != nil {
 		c.Log.Warnf("Failed find user by id : %+v", err)
 		return nil, fiber.ErrUnauthorized
 	}
@@ -168,7 +163,7 @@ func (c *UserUseCase) Logout(ctx context.Context, request *model.LogoutUserReque
 	}
 
 	user := new(entity.User)
-	if err := c.UserRepository.FindByID(tx, user, request.ID); err != nil {
+	if err := c.UserRepository.FindByToken(tx, user, request.Token); err != nil {
 		c.Log.Warnf("Failed find user by id : %+v", err)
 		return false, fiber.ErrUnauthorized
 	}

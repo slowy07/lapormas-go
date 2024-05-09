@@ -17,7 +17,7 @@ func NewAuth(userUserCase *usecase.UserUseCase) fiber.Handler {
 			return fiber.ErrUnauthorized
 		}
 
-		userUserCase.Log.Debugf("User : %+v", auth.ID)
+		userUserCase.Log.Debugf("User : %+v", auth.Token)
 		ctx.Locals("auth", auth)
 		return ctx.Next()
 	}
