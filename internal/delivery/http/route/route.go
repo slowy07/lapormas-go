@@ -6,8 +6,11 @@ import (
 )
 
 type RouteConfig struct {
-	App            *fiber.App
-	UserController *http.UserController
+	App *fiber.App
+
+	UserController    *http.UserController
+	AccountController *http.AccountController
+
 	AuthMiddleware fiber.Handler
 }
 
@@ -19,6 +22,8 @@ func (c *RouteConfig) Setup() {
 func (c *RouteConfig) SetupGuestRoute() {
 	c.App.Post("/register", c.UserController.Register)
 	c.App.Post("/login", c.UserController.Login)
+	c.App.Post("/account/register", c.AccountController.Register)
+	c.App.Post("/account/login", c.AccountController.Login)
 }
 
 func (c *RouteConfig) SetupAuthRoute() {

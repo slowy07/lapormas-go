@@ -14,7 +14,7 @@ type Account struct {
 	Image     string    `gorm:"column:image"`
 	LastSeen  int64     `gorm:"column:last_seen"`
 	RoleID    uuid.UUID `gorm:"column:role_id;type:uuid;not null"`
-	Roles     Role
+	Role      Role      `gorm:"foreignKey:RoleID;references:ID"`
 
 	CreatedAt int64 `gorm:"column:created_at;autoCreateTime:milli"`
 	UpdatedAt int64 `gorm:"column:updated_at;autoCreateTime:milli;autoUpdateTime:milli"`

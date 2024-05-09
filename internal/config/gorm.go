@@ -6,7 +6,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/wiscaksono/lapormas-go/internal/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -47,8 +46,6 @@ func NewDatabase(viper *viper.Viper, log *logrus.Logger) *gorm.DB {
 	connection.SetConnMaxLifetime(time.Duration(maxLifeTimeConnection) * time.Second)
 
 	fmt.Printf("Connected to database %s\n", database)
-
-	db.AutoMigrate(&entity.User{}, &entity.Role{}, &entity.Account{})
 
 	return db
 }
