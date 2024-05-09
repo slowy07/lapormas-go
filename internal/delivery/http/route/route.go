@@ -10,6 +10,7 @@ type RouteConfig struct {
 
 	UserController    *http.UserController
 	AccountController *http.AccountController
+	RoleController    *http.RoleController
 
 	AuthMiddleware fiber.Handler
 }
@@ -24,6 +25,7 @@ func (c *RouteConfig) SetupGuestRoute() {
 	c.App.Post("/login", c.UserController.Login)
 	c.App.Post("/account/register", c.AccountController.Register)
 	c.App.Post("/account/login", c.AccountController.Login)
+	c.App.Get("/roles", c.RoleController.List)
 }
 
 func (c *RouteConfig) SetupAuthRoute() {
